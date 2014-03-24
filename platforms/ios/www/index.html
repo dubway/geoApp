@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title>Hello World</title>
+    </head>
+    <body>
+        <div class="app">
+            <h1>Apache Cordova</h1>
+            <div id="deviceready" class="blink">
+                <p class="event listening">Connecting to Device</p>
+                <p class="event received" id="geo">Everybody likes Boobs!</p>
+            </div>
+        </div>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/zepto.min.js"></script>
+        <script type="text/javascript">
+        var times,
+            lat,
+            lon;
+
+        function getTimeStamp(){
+            myDate = new Date();
+            timeStamp = myDate.getTime();
+        }   
+        
+        function getLocation(){
+
+            if (navigator.geolocation){
+                navigator.geolocation.getCurrentPosition(displayPosition);
+  
+            } else{
+                geo.innerHTML = "Geolocation is not supported by your browser!";
+            }
+        }
+        function displayPosition(position){
+            lat = position.coords.latitude;
+            lon = position.coords.longitude;
+            getTimeStamp();
+
+            geo.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
+            submitName();
+        }
+
+        //this function makes an HTTP GET request       
+        function submitName() {
+            var herokuapp = "superlogger";
+            var name = "boobs";
+
+            $.get("http://" + herokuapp + ".herokuapp.com/" + "logdata/name/" + name + "/times/" + timeStamp + "/lat/" + lat + "/long/" + lon, function(data) {
+                    console.log(data);
+
+            });     
+        }
+        </script>
+        <script type="text/javascript">
+            app.initialize();
+            getLocation();
+        </script>
+    </body>
+</html>
