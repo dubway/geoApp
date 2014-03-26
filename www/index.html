@@ -6,15 +6,15 @@
         <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <title>Hello World</title>
+        <title>Internet ?</title>
     </head>
     <body>
         <div class="app">
-            <h1>Apache Cordova</h1>
-            <div id="deviceready" class="blink">
+            <div id="deviceready">
                 <p class="event listening">Connecting to Device</p>
-                <p class="event received" id="geo">Everybody likes Boobs!</p>
+                <p class="event received" id="geo">Internet ?</p>
             </div>
+            <p class="button" id="but" onclick="buttonClick()" style="display:none">OFF</p>
         </div>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
@@ -22,14 +22,38 @@
         <script type="text/javascript">
         var times,
             lat,
-            lon;
+            lon,
+            out,
+            checkIP;
+        var click = 0;
+
+        function buttonClick(){
+            var herokuapp = "superlogger";
+            if (click == 0){
+                but.innerHTML = "ON";
+                $.get("http://" + herokuapp + ".herokuapp.com/button/1", function(data) {
+                    console.log(data);
+                });
+                click = 1;
+            } else if (click == 1){
+                but.innerHTML = "OFF";
+                $.get("http://" + herokuapp + ".herokuapp.com/button/0", function(data) {
+                    console.log(data);
+
+                });
+                click = 0;
+            }
+
+        }
 
         function getTimeStamp(){
             myDate = new Date();
             timeStamp = myDate.getTime();
+            getIP();
         }   
         
         function getLocation(){
+            //getIP();
 
             if (navigator.geolocation){
                 navigator.geolocation.getCurrentPosition(displayPosition);
@@ -42,20 +66,58 @@
             lat = position.coords.latitude;
             lon = position.coords.longitude;
             getTimeStamp();
+            //getIP();
+            var str = checkIP + "";
+            var checkITP = str.search("216.165.95");
+            var itp;
+            if(checkITP == 0){
+                itp = "NYU";
+            } else if (checkITP != 0){
+                itp = "Somewhere";
+            }
 
-            geo.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
+            setTimeout(function(){
+                geo.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude + "<br>IP: " + checkIP + "<br>We got you at: " + itp;
+                document.getElementById('but').style.display = 'block';
+            },3200);
+
+            //geo.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude + "<br>IP: " + checkIP + "<br>We got you at: " + itp;
             submitName();
         }
 
         //this function makes an HTTP GET request       
         function submitName() {
             var herokuapp = "superlogger";
-            var name = "blah";
+            var name = "Pedro";
 
-            $.get("http://" + herokuapp + ".herokuapp.com/" + "logdata/name/" + name + "/times/" + timeStamp + "/lat/" + lat + "/long/" + lon, function(data) {
+            $.get("http://" + herokuapp + ".herokuapp.com/" + "logdata/name/" + name + "/times/" + timeStamp + "/lat/" + lat + "/long/" + lon + "/device/" + "1", function(data) {
                     console.log(data);
 
-            });     
+            });
+        }
+
+        function getIP() {
+            var herokuapp = "superlogger";
+
+            $.get("http://" + herokuapp + ".herokuapp.com/ip", function(data) {
+                    checkIP = data;
+
+            });
+        }
+
+        function loadXMLDoc(dname) 
+        {
+        if (window.XMLHttpRequest)
+          {
+          xhttp=new XMLHttpRequest();
+          }
+        else
+          {
+          xhttp=new ActiveXObject("Microsoft.XMLHTTP");
+          }
+        xhttp.open("GET",dname,false);
+        xhttp.send();
+        return xhttp.responseXML;
         }
         </script>
         <script type="text/javascript">
